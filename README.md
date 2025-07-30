@@ -125,8 +125,8 @@
 
 位于 `BP_Test` 的 `SendFeedback` 函数中：
 1.  使用蓝图初始化就创建好的`VarestJsonObject`JSON对象，对它赋值。
-2.  调用`BP_HttpManager`的`HttpSend`发送数据到服务器。
-3.  `BP_HttpManager`中，调用 `Set Header` 节点，添加 `API-Key`，调用 `Set Verb` 节点，将请求方法设置为 `POST`，最后，调用 `Process URL` 执行这个手动构造的请求。
+2.  调用`BP_HttpManager`的`HttpSend`发送数据到服务器,其中`Verb`参数设置为`POST`。
+3.  `BP_HttpManager`中，调用 `Set Header` 节点，添加 `API-Key`，最后，调用 `Process URL` 执行请求。
 
 ---
 
