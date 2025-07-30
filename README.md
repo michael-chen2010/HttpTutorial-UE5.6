@@ -1,4 +1,4 @@
-# HttpTutorial-UE5
+# HttpTutorial-UE5.6
 
 > 《UE5网络编程：用VaRest连接你的游戏与世界》课程配套工程
 
@@ -12,7 +12,7 @@
 
 *   **GET请求**: 游戏启动时，自动从服务器获取一个包含多个公告的JSON数组，并动态地在UI上创建并展示公告列表（包含标题、内容、日期）。
 *   **POST请求**: 用户可以在UI上输入反馈信息，点击提交。程序会将反馈内容封装成JSON，并附加一个自定义的`API-Key`作为Header，通过POST请求发送到服务器。
-*   **UI反馈**: 无论是请求成功还是失败，UI都会给出明确的提示，如“正在连接服务器...”、“反馈已发送！”或“网络错误”。
+*   **UI反馈**: 用户发送反馈内容后，无论是请求成功还是失败，UI都会给出明确的提示，如“Feedback received successfully!”。
 
 *(建议替换为你的项目截图)*
 
@@ -51,9 +51,8 @@
 ### 如何实现通信解耦？
 
 `BP_HttpManager` 内部定义了多个事件分发器，例如：
-*   `OnNewsReceived (公告已接收)`
-*   `OnNewsRequestFailed (公告请求失败)`
-*   `OnFeedbackSuccess (反馈发送成功)`
+*   `OnHttpRequestComplete (请求发送后，接收到服务器反馈)`
+*   `OnHttpRequestFail (请求失败)`
 
 任何其他蓝图（如UI）在获取到 `BP_HttpManager` 的引用后，只需**绑定(Bind)**这些事件。当管理器完成网络请求后，它会**调用(Call)**相应的事件分发器来广播结果。这种方式避免了管理器需要知道具体是哪个UI在监听它，实现了高度的解耦。
 
@@ -64,7 +63,7 @@
 ### 项目结构
 本仓库包含两个主要部分：
 *   `server/`: 一个简单的 **Node.js** Express服务器，为UE工程提供API接口。
-*   `VarestTest/`: **Unreal Engine 5** 的项目工程文件。
+*   `VarestTest/`: **Unreal Engine 5.6** 的项目工程文件。
 
 ### 步骤一：配置并运行本地服务器 (Node.js)
 
@@ -87,7 +86,7 @@
     node server.js
     ```
 
-5.  如果看到终端输出 `Server listening on port 3000`，则表示服务器已成功启动。请保持此终端窗口开启。
+5.  如果看到终端输出 `UE5 VaRest Course Server is running on http://localhost:3000`，则表示服务器已成功启动。请保持此终端窗口开启。
 
 ### 步骤二：运行Unreal Engine工程
 
@@ -117,25 +116,17 @@
 
 ### GET请求：获取在线公告
 
-位于 `BP_HttpManager` 的 `RequestNews` 函数中：
-1.  使用 `Call URL` 节点发起一个GET请求。
-2.  在 `OnRequestComplete` 回调中，获取响应内容(JSON字符串)。
-3.  使用 `Get Array Field` 从根JSON对象中提取出名为 "newsItems" 的数组。
-4.  使用 `For Each Loop` 遍历该JSON数组。
-5.  在循环内部，从每个数组成员（本身也是一个JSON对象）中提取 "title" 和 "content" 字段。
-6.  将解析出的数据填充到 `S_NewsItem` 结构体中，并添加到一个结构体数组变量里。
-7.  循环结束后，调用 `OnNewsReceived` 事件分发器，将整个结构体数组广播出去。
+位于 `BP_Test` 的 `RequestNews` 函数中：
+1.  使用 `HttpSend` 节点发起一个GET请求。
+2.  在 `OnRequestComplete` 回调中，根据tag`news`，获取公告相关响应内容(JSON Object或字符串)，并广播`OnNewsReceived`事件。
+3.  `UI_BulletinBoard`蓝图中事件`OnNewsReceived`处理返回的json数据，并添加到`BulletinBoard`ListView控件中。
 
 ### POST请求：提交玩家反馈
 
-位于 `BP_HttpManager` 的 `SendFeedback` 函数中：
-1.  使用 `Construct VaRest Request` 开始手动构建一个请求对象。
-2.  调用 `Set Header` 节点，添加 `API-Key`。
-3.  调用 `Set Verb` 节点，将请求方法设置为 `POST`。
-4.  使用 `Construct VaRest JSON Object` 创建一个新的JSON对象作为请求体(Body)。
-5.  使用 `Set String Field` 和 `Set Number Field` 向JSON对象中填充 "feedback" 和 "timestamp" 数据。
-6.  调用 `Set Request Object` 将构造好的JSON对象设置到请求中。
-7.  最后，调用 `Process URL` 执行这个手动构造的请求。
+位于 `BP_Test` 的 `SendFeedback` 函数中：
+1.  使用蓝图初始化就创建好的`VarestJsonObject`JSON对象，对它赋值。
+2.  调用`BP_HttpManager`的`HttpSend`发送数据到服务器。
+3.  `BP_HttpManager`中，调用 `Set Header` 节点，添加 `API-Key`，调用 `Set Verb` 节点，将请求方法设置为 `POST`，最后，调用 `Process URL` 执行这个手动构造的请求。
 
 ---
 
