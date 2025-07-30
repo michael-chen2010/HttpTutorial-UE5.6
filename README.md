@@ -14,7 +14,7 @@
 *   **POST请求**: 用户可以在UI上输入反馈信息，点击提交。程序会将反馈内容封装成JSON，并附加一个自定义的`API-Key`作为Header，通过POST请求发送到服务器。
 *   **UI反馈**: 用户发送反馈内容后，无论是请求成功还是失败，UI都会给出明确的提示，如“Feedback received successfully!”。
 
-*(建议替换为你的项目截图)*
+![*(Demo截图)*](https://media.githubusercontent.com/media/michael-chen2010/HttpTutorial-UE5.6/refs/heads/main/gif/http_record.gif)
 
 ---
 
