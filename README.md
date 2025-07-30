@@ -1,4 +1,4 @@
-# HttpTutorial-UE5.6
+# HttpTutorial-UE5
 
 > 《UE5网络编程：用VaRest连接你的游戏与世界》课程配套工程
 
@@ -14,7 +14,6 @@
 *   **POST请求**: 用户可以在UI上输入反馈信息，点击提交。程序会将反馈内容封装成JSON，并附加一个自定义的`API-Key`作为Header，通过POST请求发送到服务器。
 *   **UI反馈**: 无论是请求成功还是失败，UI都会给出明确的提示，如“正在连接服务器...”、“反馈已发送！”或“网络错误”。
 
- 
 *(建议替换为你的项目截图)*
 
 ---
@@ -60,23 +59,57 @@
 
 ---
 
-## 如何使用 (How to Use)
+## 如何运行 (How to Run)
+
+### 项目结构
+本仓库包含两个主要部分：
+*   `server/`: 一个简单的 **Node.js** Express服务器，为UE工程提供API接口。
+*   `VarestTest/`: **Unreal Engine 5** 的项目工程文件。
+
+### 步骤一：配置并运行本地服务器 (Node.js)
+
+**UE工程依赖此服务器运行，请务必先启动服务器！**
+
+1.  **安装 Node.js**: 如果你的电脑没有安装Node.js，请从 [官方网站](https://nodejs.org/) 下载并安装 (推荐LTS版本)。安装后会自动包含 `npm` 包管理器。
+
+2.  **打开终端 (Terminal/CMD)**，并进入 `server` 目录：
+    ```bash
+    cd path/to/your/project/server
+    ```
+
+3.  **安装依赖**: 在 `server` 目录下，运行以下命令来安装所需的库 (express, cors, body-parser)：
+    ```bash
+    npm install
+    ```
+
+4.  **启动服务器**: 安装完成后，运行以下命令启动服务器：
+    ```bash
+    node server.js
+    ```
+
+5.  如果看到终端输出 `Server listening on port 3000`，则表示服务器已成功启动。请保持此终端窗口开启。
+
+### 步骤二：运行Unreal Engine工程
 
 1.  **环境要求**:
-    *   Unreal Engine 5.6
+    *   Unreal Engine 5.6 (或兼容版本)
+    *   确保本地服务器已按步骤一成功运行。
+
 2.  **依赖插件**:
     *   [**VaRest Plugin**](https://www.fab.com/listings/5b751595-fe3e-4e85-b217-9b5496ab6d3f): 请确保已在引擎中安装并启用了此插件。
+
 3.  **运行项目**:
-    *   克隆或下载本仓库。
-    *   使用Unreal Engine打开 `.uproject` 文件。
-    *   打开主关卡 `Lvl_ThirdPerson`。
+    *   进入 `VarestTest` 目录，使用Unreal Engine打开 `VarestTest.uproject` 文件。
+    *   打开主关卡 `Content/ThirdPerson/Maps/Lvl_ThirdPerson`。
     *   点击 **运行 (Play)** 即可看到效果。
 
-4.  **核心蓝图文件**:
-    *   `Content/Blueprints/BP_HttpManager`: 核心HTTP通信管理器，所有GET/POST逻辑都在这里实现。
-    *   `Content/Blueprints/BP_Test`: 用于展示公告和提交反馈的蓝图，配合`UI_BulletinBoard`一起使用，演示了如何与`BP_HttpManager`进行交互。
-    *   `Content/Blueprints/ListView/UI_AnnouncementEntry`: `UI_BulletinBoard`使用的ListView控件相关UI文件。
-    *   `Content/Blueprints/ListView/BP_AnnouncementData`: `UI_BulletinBoard`使用的ListView控件相关数据文件。
+### 核心蓝图文件
+
+*   `Content/Blueprints/BP_HttpManager`: 核心HTTP通信管理器，所有GET/POST逻辑都在这里实现。
+*   `Content/Blueprints/BP_Test`: 玩家角色蓝图，负责创建UI并触发HTTP请求。
+*   `Content/Blueprints/UI/UI_BulletinBoard`: 公告板的主UI控件。
+*   `Content/Blueprints/ListView/UI_AnnouncementEntry`: 用于ListView中单条公告的条目UI。
+*   `Content/Blueprints/ListView/BP_AnnouncementData`: 用于ListView的数据资产对象。
 
 ---
 
@@ -109,4 +142,3 @@
 ## 许可证 (License)
 
 本项目采用 [MIT License](LICENSE)。
-
