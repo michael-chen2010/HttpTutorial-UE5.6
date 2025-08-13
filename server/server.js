@@ -94,6 +94,11 @@ const data =
 // 当收到对 http://localhost:3000/news 的GET请求时，执行此函数
 app.get('/news', (req, res) => {
     console.log(`[${new Date().toISOString()}] GET /news -> 请求已收到`);
+    
+    // 打印GET请求的相关参数
+    console.log("请求参数 (req.query):", req.query);
+    //console.log("请求头 (req.headers):", req.headers);
+    //console.log("请求路径参数 (req.params):", req.params);
 
     // 使用 res.json() 将我们的新闻数据数组作为JSON格式响应发送回客户端
     res.status(200).json(newsData);
@@ -123,7 +128,7 @@ app.post('/feedback', (req, res) => {
     const { metadata, personalInfo } = req.body; // 从解析后的JSON中提取数据
 
     // 简单验证一下数据是否存在
-    if (!metadata) {
+    if (!metadata || !personalInfo) {
         console.log("-> 数据无效: metadata字段缺失。");
         // 如果缺少必要数据，返回400 Bad Request错误
         return res.status(400).json({ error: 'metadata field is missing in the request body' });
