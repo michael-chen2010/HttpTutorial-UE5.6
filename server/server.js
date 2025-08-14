@@ -96,7 +96,7 @@ app.get('/news', (req, res) => {
     console.log(`[${new Date().toISOString()}] GET /news -> 请求已收到`);
     
     // 打印GET请求的相关参数
-    console.log("请求参数 (req.query):", req.query);
+    console.log("请求参数 (req.query):", req.query == null || Object.keys(req.query).length === 0 ? {} : req.query);
     //console.log("请求头 (req.headers):", req.headers);
     //console.log("请求路径参数 (req.params):", req.params);
 
